@@ -16,7 +16,7 @@ namespace villaApp_MagicVilla.Controllers
         {
             return Ok(VillaStore.VillaList);
         }
-        [HttpGet("id")]
+        [HttpGet("id",Name ="GetVilla")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -50,7 +50,7 @@ namespace villaApp_MagicVilla.Controllers
             }
             villaDto.Id = VillaStore.VillaList.OrderByDescending(villa => villa.Id).FirstOrDefault().Id+1;
             VillaStore.VillaList.Add(villaDto);
-            return Ok(villaDto);
+            return CreatedAtRoute("GetVilla",new { id = villaDto.Id },villaDto);
         }
     }
 }
