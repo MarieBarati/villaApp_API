@@ -61,5 +61,24 @@ namespace villaApp_MagicVilla.Controllers
             VillaStore.VillaList.Add(villaDto);
             return CreatedAtRoute("GetVilla",new { id = villaDto.Id },villaDto);
         }
+        
+        [HttpDelete("id",Name ="DeleteVilla")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult DeleteVilla(int id)
+        {
+            if (id == 0)
+            {
+                return BadRequest();
+            }
+            var villa = VillaStore.VillaList.Find(villa => villa.Id == id);
+            if (villa == null)
+            {
+                return NotFound();
+            }
+                VillaStore.VillaList.Remove(villa);
+            return Ok();
+        }
     }
 }
