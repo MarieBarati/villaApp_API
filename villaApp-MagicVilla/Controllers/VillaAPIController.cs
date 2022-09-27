@@ -4,12 +4,16 @@ using villaApp_MagicVilla.Models;
 using villaApp_MagicVilla.Models.Dto;
 
 namespace villaApp_MagicVilla.Controllers
-
 {
     [Route("api/VillaApi")]
     [ApiController]
     public class VillaAPIController : ControllerBase
     {
+        private readonly ILogger<VillaAPIController>  _logger;
+        public VillaAPIController(ILogger<VillaAPIController> logger)
+        {
+            _logger = logger;
+        }
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<VillaDto>> GetVillas()
@@ -24,6 +28,7 @@ namespace villaApp_MagicVilla.Controllers
         {
             if(id == 0)
             {
+                _logger.LogError("this id is invalid, id =", id);
                 return BadRequest();
             }
             var villa = VillaStore.VillaList.FirstOrDefault(villa => villa.Id == id);
@@ -79,6 +84,24 @@ namespace villaApp_MagicVilla.Controllers
             }
                 VillaStore.VillaList.Remove(villa);
             return Ok();
+        }
+        [HttpPut("id", Name = "UpdateVilla")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult UpdateVilla(int id,[FromBody]VillaDto villaDto)
+        {
+            if (villaDto == null || villaDto.Id != id)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest);
+            }
+            var villa = VillaStore.VillaList.FirstOrDefault(villa => villa.Id == id);
+            if (villa == null)
+            { 
+                return NotFound();
+            }
+            villa.Name = villaDto.Name;
+
+            return NoContent();
         }
     }
 }
